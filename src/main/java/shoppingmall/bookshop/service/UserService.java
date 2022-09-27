@@ -3,7 +3,6 @@ package shoppingmall.bookshop.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingmall.bookshop.dto.UserRegisterDto;
 import shoppingmall.bookshop.entity.User;
 import shoppingmall.bookshop.repository.UserRepository;
 

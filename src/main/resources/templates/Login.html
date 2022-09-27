@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+
+    <form action="/login" METHOD="post">
+        ID <input type="text" name="id"> <br>
+        Password <input type="password" name="password"><br>
+        <button type="submit" value="login">로그인</button>
+    </form>
+
+    <div>
+        다른 방식으로 로그인<br>
+        <button type="button" onclick="location.href='https://nid.naver.com/oauth2.0/authorize'">네이버 로그인</button>
+        <button type="button" onclick="location.href='https://kauth.kakao.com/oauth/authorize'">카카오 로그인</button>
+    </div>
+
+    <div>
+        <button type="button" onclick="location.href='/user/new'">회원가입</button>
+    </div>
+
+
+</body>
+</html>

@@ -17,7 +17,7 @@ public class UserRegisterDto {
 
     private String nickname;
 
-    public User toEntity(String email, String nickname) {
+    public User toEntity() {
         return  User.builder()
                 .email(email)
                 .nickname(nickname)
