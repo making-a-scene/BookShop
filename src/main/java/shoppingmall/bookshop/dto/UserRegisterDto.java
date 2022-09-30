@@ -3,7 +3,7 @@ package shoppingmall.bookshop.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import shoppingmall.bookshop.entity.Role;
+import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
 import java.time.LocalDate;

@@ -1,10 +1,9 @@
 package shoppingmall.bookshop.entity;
 
 import lombok.*;
+import shoppingmall.bookshop.authentication.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -14,10 +13,11 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor(access = PROTECTED)
+@Table(name="userDB")
 @Builder
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     private String social;
@@ -32,6 +32,7 @@ public class User {
 
     private Date updatedAt;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 }
