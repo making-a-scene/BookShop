@@ -1,6 +1,7 @@
 package shoppingmall.bookshop.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import shoppingmall.bookshop.authentication.Role;
 
 import javax.persistence.*;
@@ -20,6 +21,10 @@ public class User {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    private String userId;
+
+    private String password;
+
     private String social;
 
     private String email;
@@ -28,11 +33,16 @@ public class User {
 
     private String nickname;
 
+    @CreationTimestamp
     private LocalDate createdAt;
 
     private Date updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
+    private String provider;
+    private String providerId;
 
 }

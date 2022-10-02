@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
 </head>
 <body>
 
-<form action="/user/register" METHOD="post">
-  아이디 <input type="text" name="id"><br>
+<form action="/register" METHOD="post">
+  아이디 <input type="text" name="username"><br>
   비밀번호 <input type="password" name="password"><br>
-  닉네임 <input type="password" name="password"><br>
-  이메일 <input type="password" name="password"><br>
+  닉네임 <input type="text" name="nickname"><br>
+  이메일 <input type="text" name="email"><br>
   <button type="submit" value="login" onclick="alert('가입이 완료되었습니다.')">가입하기</button>
 </form>
-
-
 
 </body>
 </html>

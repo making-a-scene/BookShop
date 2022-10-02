@@ -1,7 +1,8 @@
-package shoppingmall.bookshop.authentication;
+package shoppingmall.bookshop.authentication.OAuth2;
 
 import lombok.Builder;
 import lombok.Getter;
+import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
 import java.time.LocalDate;

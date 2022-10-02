@@ -1,6 +1,7 @@
 package shoppingmall.bookshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,20 +12,26 @@ import shoppingmall.bookshop.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
-public class SigninController {
+public class JoinController {
 
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping ("/user/new")
-    public String signinPage() {
-        return "Signin";
+    @GetMapping ("/new")
+    public String join() {
+        return "joinForm";
     }
 
-    @PostMapping("/user/register")
-    public String register(@RequestBody UserRegisterDto userRegisterDto) {
+    @PostMapping("/register")
+    public String register(UserRegisterDto userRegisterDto) {
+
+        String rawPassword = userRegisterDto.getPassword();
+        String encPassword = passwordEncoder.encode(rawPassword);
+        userRegisterDto.setPassword(encPassword);
+
         User user = userRegisterDto.toEntity();
         userService.register(user);
-        return "redirect:/";
+        return "redirect:/loginForm";
 
     }
 }
