@@ -6,11 +6,12 @@ import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Builder
-public class OAuthAttributes {
+public class OAuth2Attributes {
 
     private Map<String, Object> attributes;
 
@@ -18,29 +19,28 @@ public class OAuthAttributes {
     private String nickname;
     private String email;
 
-    public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        if("naver".equals(registrationId))  return ofNaver("id", attributes);
+    public static OAuth2Attributes of(String provider, String attributeKey, Map<String, Object> attributes) {
+        if("naver".equals(provider))  return ofNaver(attributeKey, attributes);
 
-        return ofKakao(userNameAttributeName, attributes);
+        return ofKakao(attributeKey, attributes);
     }
 
-    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuth2Attributes ofNaver(String attributeKey, Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
-        return OAuthAttributes.builder()
+        return OAuth2Attributes.builder()
                 .nickname((String) response.get("nickname"))
                 .email((String) response.get("email"))
                 .attributes(response)
-                .nameAttributeKey(userNameAttributeName)
+                .nameAttributeKey(attributeKey)
                 .build();
-
     }
 
-    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuth2Attributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        return OAuthAttributes.builder()
+        return OAuth2Attributes.builder()
                 .nickname((String) kakaoProfile.get("nickname"))
                 .email((String) kakaoAccount.get("email"))
                 .attributes(attributes)
@@ -49,12 +49,15 @@ public class OAuthAttributes {
 
     }
 
-    public User toEntity() {
-        return User.builder()
-                .nickname(nickname)
-                .email(email)
-                .role(Role.USER)
-                .createdAt(LocalDate.now())
-                .build();
+    public Map<String, Object> convertToMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", nameAttributeKey);
+        map.put("key", nameAttributeKey);
+        map.put("nickname", nickname);
+        map.put("email", email);
+
+        return map;
     }
+
+
 }

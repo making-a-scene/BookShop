@@ -3,10 +3,6 @@ package shoppingmall.bookshop.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
@@ -17,7 +13,6 @@ import java.time.LocalDate;
 @Builder
 public class UserRegisterDto {
 
-    private PasswordEncoder passwordEncoder;
     private String userId;
     private String password;
     private String nickname;
@@ -29,11 +24,9 @@ public class UserRegisterDto {
 
     public User toEntity() {
 
-        passwordEncoder = new BCryptPasswordEncoder();
-
         return  User.builder()
                 .userId(userId)
-                .password(passwordEncoder.encode(password))
+                .password(password)
                 .email(email)
                 .nickname(nickname)
                 .createdAt(LocalDate.now())
