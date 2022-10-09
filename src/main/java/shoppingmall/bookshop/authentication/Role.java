@@ -1,14 +1,14 @@
 package shoppingmall.bookshop.authentication;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
 public enum Role {
-    USER("ROLE_USER", "일반 회원"),
-    SUPER("ROLE_SUPER", "관리자");
+    ROLE_USER("ROLE_USER"),
+    ROLE_SUPER("ROLE_SUPER");
 
-    private final String key;
-    private final String title;
+    String role;
+
+    Role(String role) {
+        this.role = role;
+    }
+    public String value() {
+        return role;
+    }
 }

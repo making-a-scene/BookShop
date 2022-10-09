@@ -14,11 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import shoppingmall.bookshop.authentication.OAuth2.OAuth2SuccessHandler;
-import shoppingmall.bookshop.authentication.OAuth2.OAuth2UserServiceImpl;
-import shoppingmall.bookshop.authentication.jwt.JwtAuthenticationFilter;
-import shoppingmall.bookshop.authentication.jwt.JwtTokenFilter;
-import shoppingmall.bookshop.authentication.jwt.JwtTokenProvider;
+import shoppingmall.bookshop.authentication.formLogin.FormAuthenticationFilter;
+import shoppingmall.bookshop.authentication.formLogin.FormUserDetailsService;
+import shoppingmall.bookshop.authentication.socialLogin.OAuth2FailureHandler;
+import shoppingmall.bookshop.authentication.socialLogin.OAuth2SuccessHandler;
+import shoppingmall.bookshop.authentication.socialLogin.SocialUserService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,10 +26,11 @@ import shoppingmall.bookshop.authentication.jwt.JwtTokenProvider;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
-    private final PrincipalDetailsService principalDetailsService;
+    private final FormUserDetailsService formUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final OAuth2UserServiceImpl oAuth2UserServiceImpl;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final AuthenticationConfiguration authConfig;
+    private final SocialUserService socialUserService;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -39,29 +40,35 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-        authProvider.setUserDetailsService(principalDetailsService);
+        authProvider.setUserDetailsService(formUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
     }
 
+    public OAuth2SuccessHandler oAuth2SuccessHandler() {
+        return new OAuth2SuccessHandler(jwtTokenProvider);
+    }
+    public OAuth2FailureHandler oAuth2FailureHandler() {
+        return new OAuth2FailureHandler();
+    }
 
     // HttpSecurity : http 요청이 발생했을 때 적용할 보안 설정
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        JwtTokenFilter customFilter = new JwtTokenFilter((jwtTokenProvider));
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-
-        http.csrf().disable()
-                .httpBasic().disable();
+        http.addFilter(new FormAuthenticationFilter(jwtTokenProvider, authenticationManager(authConfig)));
+        http.addFilterBefore(new AuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.csrf().disable();
+        http.httpBasic().disable();
         http.authorizeRequests()
-                .antMatchers("/user/**").authenticated()
-                .antMatchers("/super/**").access("hasRole('ROLE_SUPER')")
+                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/super/**").hasRole("SUPER")
                 .anyRequest().permitAll()
                 .and()
         .sessionManagement()
@@ -69,19 +76,18 @@ public class SecurityConfig {
                 .and()
         .formLogin()
                 .usernameParameter("userId")
-                .loginPage("/loginForm")
                 .loginProcessingUrl("/login") // 해당 url에 접속되면 spring security가 대신 로그인을 해준다.
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/user")
                 .and()
         .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/user")
                 .and()
         .oauth2Login()
                 .loginPage("/oauth2/login")
-                .successHandler(oAuth2SuccessHandler)
-                .userInfoEndpoint()
-                .userService(oAuth2UserServiceImpl);
+                .successHandler(oAuth2SuccessHandler())
+                .failureHandler(oAuth2FailureHandler())
+                .userInfoEndpoint().userService(socialUserService);
 
         return http.build(); // spring security filter 생성, 스프링 빈으로 등록
 

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class UserRegisterDto {
 
     private String userId;
+    private String oAuth2Id;
     private String password;
     private String nickname;
     private String email;
@@ -26,11 +27,12 @@ public class UserRegisterDto {
 
         return  User.builder()
                 .userId(userId)
+                .oAuth2Id(oAuth2Id)
                 .password(password)
                 .email(email)
                 .nickname(nickname)
                 .createdAt(LocalDate.now())
-                .role(Role.USER)
+                .role(Role.ROLE_USER)
                 .build();
     }
 }

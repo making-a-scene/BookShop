@@ -1,23 +1,24 @@
 package shoppingmall.bookshop.authentication;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import shoppingmall.bookshop.authentication.socialLogin.OAuth2UserInfo;
 import shoppingmall.bookshop.entity.User;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+
+import java.util.*;
 
 // login processing url인 "/login"에 접속되면 spring security가 낚아채서 이 클래스의 객체로 로그인을 수행해준다.
 @NoArgsConstructor
+@Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private User user;
     private Map<String, Object> attributes;
-
 
     // 일반 로그인 constructor
     public PrincipalDetails(User user) {
@@ -25,10 +26,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     }
 
     // OAuth2 로그인 constructor
-    public PrincipalDetails(User user, Map<String, Object> attributes) {
+    public PrincipalDetails(User user, OAuth2UserInfo oAuth2UserInfo) {
         this.user = user;
-        this.attributes = attributes;
+        this.attributes = oAuth2UserInfo.getAttributes();
     }
+
 
     //// OAuth2User implementation ////
     @Override
@@ -36,19 +38,21 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         return attributes;
     }
 
-    @Override
-    public String getName() {
-        return null;
-    }
-
-
     //// UserDetails implementation ////
     @Override
     // 해당 User가 가지고 있는 권한 리턴
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collect = new ArrayList<>();
-        collect.add((GrantedAuthority) () -> user.getRole().getKey());
-        return collect;
+        String role = user.getRole().value();
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role);
+        return Collections.singleton(grantedAuthority);
+    }
+
+    @Override
+    public String getName() {
+        if(user.getUserId() == null) {
+            return user.getOAuth2Id();
+        }
+        return user.getUserId();
     }
 
     @Override
@@ -58,7 +62,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
+        if(user.getUserId() == null) {
+            return user.getOAuth2Id();
+        }
         return user.getUserId();
+
     }
 
     @Override

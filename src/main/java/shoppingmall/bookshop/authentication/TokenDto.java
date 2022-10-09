@@ -1,4 +1,4 @@
-package shoppingmall.bookshop.authentication.OAuth2;
+package shoppingmall.bookshop.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

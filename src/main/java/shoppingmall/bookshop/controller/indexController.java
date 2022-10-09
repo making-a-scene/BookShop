@@ -13,13 +13,11 @@ public class indexController {
     }
 
     @GetMapping("/user")
-    @ResponseBody
-    public String user() {
-        return "user";
+    public String authorizedUserIndex() {
+        return "userIndex";
     }
 
     @GetMapping("/super")
-    @ResponseBody
     public String superUser() {
         return "super";
     }

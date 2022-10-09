@@ -26,6 +26,14 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Optional<User> findUserByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    public User findUserByoAuth2Id(String oAuth2Id) {
+        return userRepository.findByOAuth2Id(oAuth2Id);
+    }
+
     @Transactional
     public void register(User user) {
         userRepository.save(user);

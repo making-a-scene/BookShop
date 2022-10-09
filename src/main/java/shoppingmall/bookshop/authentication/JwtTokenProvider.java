@@ -1,8 +1,7 @@
-package shoppingmall.bookshop.authentication.jwt;
+package shoppingmall.bookshop.authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import shoppingmall.bookshop.authentication.OAuth2.TokenDto;
-import shoppingmall.bookshop.authentication.PrincipalDetailsService;
+import shoppingmall.bookshop.authentication.formLogin.FormUserDetailsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -22,14 +20,13 @@ public class JwtTokenProvider {
 
     private final long ACCESS_TOKEN_VALID_MILISECOND = 1000L * 60 * 60;
     private final long REFRESH_TOKEN_VALID_MILISECOND = 1000L * 60 * 60 * 24 * 14;
-    private final PrincipalDetailsService principalDetailsService;
+    private final FormUserDetailsService formUserDetailsService;
 
     private String secretKey = "secretkeyyyy12345678901234567890";
 
     public TokenDto getToken(String userId) {
         return new TokenDto(createAccessToken(userId), createRefreshToken(userId));
     }
-
 
     public String createAccessToken(String userId) {
         Claims claims = Jwts.claims().setSubject(userId); // 토큰의 이름 지정
@@ -71,27 +68,20 @@ public class JwtTokenProvider {
             해당 토큰의 username 반환
          */
 
-        UserDetails userDetails = principalDetailsService.loadUserByUsername(userId);
+        UserDetails userDetails = formUserDetailsService.loadUserByUsername(userId);
         return new UsernamePasswordAuthenticationToken(userDetails,"", userDetails.getAuthorities());
-    }
-
-    // HTTP request 헤더에서 이름이 X-AUTH-TOKEN인 토큰 데이터 리턴
-    public String resolveToken(HttpServletRequest req) {
-        return req.getHeader("X-AUTH_TOKEN");
     }
 
     // 만료되지 않은(유효한) 토큰인지 검증
     public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token);
-            return claims.getBody().getExpiration().after(new Date());
-        } catch (JwtException e){
-            return false;
-        }
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token);
+        return claims.getBody().getExpiration().after(new Date());
     }
 
-    public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJwt(token).getBody().getSubject();
+    public String getUserId(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build()
+                .parseClaimsJws(token).getBody().getSubject();
     }
+
 
 }
