@@ -1,12 +1,12 @@
 package shoppingmall.bookshop.authentication.socialLogin;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import shoppingmall.bookshop.authentication.Role;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Getter
 @Builder
@@ -22,7 +22,6 @@ public class OAuth2Attributes {
 
     public static OAuth2UserInfo of(String provider, String userNameAttribute, Map<String, Object> attributes) {
 
-
         switch (provider) {
             case "naver" -> {
                 OAuth2Attributes oAuth2Attributes = OAuth2Attributes.ofNaver(userNameAttribute, attributes);
@@ -32,8 +31,11 @@ public class OAuth2Attributes {
                 OAuth2Attributes oAuth2Attributes = OAuth2Attributes.ofKakao(userNameAttribute, attributes);
                 return new KakaoUserInfo(oAuth2Attributes.getAttributes());
             }
+            default -> {
+                throw new NoSuchElementException("해당 로그인 방식은 지원하지 않습니다.");
+            }
         }
-        return null;
+
     }
 
     private static OAuth2Attributes ofNaver(String userNameAttribute, Map<String, Object> attributes) {

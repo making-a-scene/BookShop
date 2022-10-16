@@ -1,14 +1,13 @@
 package shoppingmall.bookshop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingmall.bookshop.entity.User;
 import shoppingmall.bookshop.repository.UserRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -39,5 +38,17 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void setRefreshToken(String userId, String token) {
+
+        findUserByUserId(userId).ifPresentOrElse(
+                (user) -> {
+                    user.setRefreshToken(token);
+                    register(user);},
+                () ->  {findUserByoAuth2Id(userId).setRefreshToken(token);
+                    register(findUserByoAuth2Id(userId));}
+        );
+
+    }
 
 }

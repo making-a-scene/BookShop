@@ -1,13 +1,14 @@
 package shoppingmall.bookshop.entity;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import shoppingmall.bookshop.BaseEntity;
 import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.authentication.socialLogin.Provider;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -17,7 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor(access = PROTECTED)
 @Table(name="userDB")
 @Builder
-public class User {
+public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -28,16 +29,15 @@ public class User {
 
     private String password;
 
-    private String social;
-
     private String email;
 
     private String nickname;
 
-    @CreationTimestamp
-    private LocalDate createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-    private Date updatedAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -45,6 +45,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    private String providerId;
+    private String refreshToken;
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 
 }

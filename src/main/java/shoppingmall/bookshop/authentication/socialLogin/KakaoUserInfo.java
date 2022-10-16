@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import shoppingmall.bookshop.authentication.Role;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = getRole().value();
+        String role = Role.ROLE_USER.value();
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role);
         return Collections.singleton(grantedAuthority);
     }

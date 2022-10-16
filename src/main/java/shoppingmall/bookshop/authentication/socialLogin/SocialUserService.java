@@ -30,7 +30,6 @@ public class SocialUserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2Attributes.of(provider, userNameAttribute, oAuth2User.getAttributes());
 
-
         switch(provider) {
             case "naver" -> {
                 Map<String, Object> response = (Map<String, Object>) oAuth2User.getAttributes().get("response");

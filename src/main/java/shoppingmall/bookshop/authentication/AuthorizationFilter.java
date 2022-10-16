@@ -1,7 +1,7 @@
 package shoppingmall.bookshop.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -33,26 +33,30 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             String TOKEN_PREFIX = "Bearer ";
 
             if(authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
+                log.info("요청 헤더에서 access token 정보를 받아 옵니다.");
                 String token = authorizationHeader.substring("Bearer ".length());
-                try {
-                    jwtTokenProvider.validateToken(token);
-                    SecurityContextHolder.getContext().setAuthentication((jwtTokenProvider.getAuthentication(token)));
-                    response.sendRedirect("/user");
 
-                } catch(JwtException e) {
-                    log.error("Fail Decode Authorization Token");
+                log.info("토큰의 유효성을 검증합니다.");
+                if(jwtTokenProvider.validateToken(token, response)) {
+                    log.info("토큰이 유효한 경우 Authentication을 SecurityContextHolder에 보관합니다.");
+                    SecurityContextHolder.getContext().setAuthentication((jwtTokenProvider.getAuthentication(token)));
+                    new ObjectMapper().writeValue(response.getOutputStream(), "인증 완료");
+                } else {
+                    log.error("인증 실패");
 
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.setContentType((MediaType.APPLICATION_JSON_VALUE));
 
                     Map<String, Object> body = new LinkedHashMap<>();
                     body.put("code", HttpStatus.UNAUTHORIZED.value());
-                    body.put("error", e.getMessage());
-
+                    body.put("error", new ExpiredJwtException(jwtTokenProvider.getClaimsFromJwt(token).getHeader(), jwtTokenProvider.getClaimsFromJwt(token).getBody(), "refresh token 만료"));
+                    new ObjectMapper().writeValue(response.getOutputStream(), body);
                 }
+            } else {
+                log.info("토큰 발급 전이므로 AuthorizationFilter를 거치지 않습니다.");
+                filterChain.doFilter(request, response);
             }
 
-            filterChain.doFilter(request, response);
         }
     }
 }

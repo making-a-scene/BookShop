@@ -3,6 +3,7 @@ package shoppingmall.bookshop.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @Builder
+@Slf4j
 public class UserRegisterDto {
 
     private String userId;
@@ -24,6 +26,7 @@ public class UserRegisterDto {
     }
 
     public User toEntity() {
+        log.info("새로운 회원 객체를 생성합니다.");
 
         return  User.builder()
                 .userId(userId)
@@ -31,7 +34,6 @@ public class UserRegisterDto {
                 .password(password)
                 .email(email)
                 .nickname(nickname)
-                .createdAt(LocalDate.now())
                 .role(Role.ROLE_USER)
                 .build();
     }

@@ -19,6 +19,7 @@ import shoppingmall.bookshop.authentication.formLogin.FormUserDetailsService;
 import shoppingmall.bookshop.authentication.socialLogin.OAuth2FailureHandler;
 import shoppingmall.bookshop.authentication.socialLogin.OAuth2SuccessHandler;
 import shoppingmall.bookshop.authentication.socialLogin.SocialUserService;
+import shoppingmall.bookshop.service.UserService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final FormUserDetailsService formUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationConfiguration authConfig;
+    private final UserService userService;
     private final SocialUserService socialUserService;
 
 
@@ -52,7 +54,7 @@ public class SecurityConfig {
     }
 
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(jwtTokenProvider);
+        return new OAuth2SuccessHandler(jwtTokenProvider, userService);
     }
     public OAuth2FailureHandler oAuth2FailureHandler() {
         return new OAuth2FailureHandler();
@@ -62,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.addFilter(new FormAuthenticationFilter(jwtTokenProvider, authenticationManager(authConfig)));
+        http.addFilter(new FormAuthenticationFilter(jwtTokenProvider, authenticationManager(authConfig), userService));
         http.addFilterBefore(new AuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         http.csrf().disable();
         http.httpBasic().disable();
