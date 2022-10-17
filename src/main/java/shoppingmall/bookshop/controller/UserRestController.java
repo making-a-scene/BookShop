@@ -11,15 +11,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import shoppingmall.bookshop.authentication.JwtTokenProvider;
-import shoppingmall.bookshop.authentication.formLogin.FormAuthenticationFilter;
-import shoppingmall.bookshop.dto.LoginRequestDto;
+
 import shoppingmall.bookshop.dto.UserRegisterDto;
 import shoppingmall.bookshop.entity.User;
 import shoppingmall.bookshop.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+
 
 @RestController()
 @RequiredArgsConstructor
@@ -49,6 +47,15 @@ public class UserRestController {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(user, httpHeaders, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public String logout(HttpServletRequest request) {
+
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        return "logout completed";
+
     }
 
 
