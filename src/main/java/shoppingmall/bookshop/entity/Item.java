@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shoppingmall.bookshop.dto.ItemUpdateDto;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,4 +36,11 @@ public class Item {
 
     @ManyToOne
     private User admin;
+
+    public void update(ItemUpdateDto itemUpdateDto) {
+        this.title = itemUpdateDto.getTitle();
+        this.author = itemUpdateDto.getAuthor();
+        this.summery = itemUpdateDto.getSummery();
+        this.price = itemUpdateDto.getPrice();
+    }
 }

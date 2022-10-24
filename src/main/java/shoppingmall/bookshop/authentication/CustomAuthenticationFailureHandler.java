@@ -1,4 +1,4 @@
-package shoppingmall.bookshop.authentication.socialLogin;
+package shoppingmall.bookshop.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Slf4j
-public class OAuth2FailureHandler implements AuthenticationFailureHandler {
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -29,6 +29,5 @@ public class OAuth2FailureHandler implements AuthenticationFailureHandler {
         body.put("error", exception.getMessage());
 
         new ObjectMapper().writeValue(response.getOutputStream(), body);
-
     }
 }

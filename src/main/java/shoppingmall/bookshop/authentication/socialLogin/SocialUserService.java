@@ -25,10 +25,7 @@ public class SocialUserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String userNameAttribute = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         String provider = userRequest.getClientRegistration().getRegistrationId();
-
-        OAuth2UserInfo oAuth2UserInfo = OAuth2Attributes.of(provider, userNameAttribute, oAuth2User.getAttributes());
 
         switch(provider) {
             case "naver" -> {
@@ -60,7 +57,7 @@ public class SocialUserService extends DefaultOAuth2UserService {
                     .build();
             userService.register(user);
         }
-        return new PrincipalDetails(user, oAuth2UserInfo);
+        return new PrincipalDetails(user, oAuth2User);
 
     }
 }

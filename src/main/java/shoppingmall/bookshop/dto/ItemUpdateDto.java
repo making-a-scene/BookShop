@@ -1,9 +1,11 @@
 package shoppingmall.bookshop.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import shoppingmall.bookshop.entity.Item;
 
 @Getter
+@AllArgsConstructor
 public class ItemUpdateDto {
 
     private Long id;
@@ -16,13 +18,4 @@ public class ItemUpdateDto {
 
     private int price;
 
-    public Item toEntity() {
-        return Item.builder()
-                .id(id)
-                .title(title)
-                .author(author)
-                .summery(summery)
-                .price(price)
-                .build();
-    }
 }

@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -24,9 +27,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getServletPath().equals("login") || request.getServletPath().equals("oauth2/login")) {
+        if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("oauth2/login")) {
+            log.info("토큰 발급 전이므로 AuthorizationFilter를 거치지 않습니다.");
+
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -52,11 +58,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                     body.put("error", new ExpiredJwtException(jwtTokenProvider.getClaimsFromJwt(token).getHeader(), jwtTokenProvider.getClaimsFromJwt(token).getBody(), "refresh token 만료"));
                     new ObjectMapper().writeValue(response.getOutputStream(), body);
                 }
-            } else {
-                log.info("토큰 발급 전이므로 AuthorizationFilter를 거치지 않습니다.");
-                filterChain.doFilter(request, response);
             }
-
+            filterChain.doFilter(request, response);
         }
     }
 }

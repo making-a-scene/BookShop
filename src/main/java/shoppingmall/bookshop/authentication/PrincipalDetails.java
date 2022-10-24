@@ -6,13 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import shoppingmall.bookshop.authentication.socialLogin.OAuth2UserInfo;
 import shoppingmall.bookshop.entity.User;
 
 
 import java.util.*;
 
-// login processing url인 "/login"에 접속되면 spring security가 낚아채서 이 클래스의 객체로 로그인을 수행해준다.
 @NoArgsConstructor
 @Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
@@ -26,9 +24,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     }
 
     // OAuth2 로그인 constructor
-    public PrincipalDetails(User user, OAuth2UserInfo oAuth2UserInfo) {
+    public PrincipalDetails(User user, OAuth2User oAuth2User) {
         this.user = user;
-        this.attributes = oAuth2UserInfo.getAttributes();
+        this.attributes = oAuth2User.getAttributes();
     }
 
 
