@@ -18,7 +18,6 @@ import java.util.Map;
 public class SocialUserService extends DefaultOAuth2UserService {
 
     private final UserService userService;
-    private User user;
     private String oAuth2Id;
     private String nickname;
 
@@ -46,17 +45,18 @@ public class SocialUserService extends DefaultOAuth2UserService {
             }
         }
 
-        user = userService.findUserByoAuth2Id(oAuth2Id);
-        if(user == null) {
-            user = User.builder()
-                    .oAuth2Id(oAuth2Id)
-                    .nickname(nickname)
-                    .email(oAuth2Id)
-                    .role(Role.ROLE_USER)
-                    .provider(Provider.getEnumClass(provider))
-                    .build();
-            userService.register(user);
-        }
+        User user = userService.findUserByEmail(oAuth2Id).orElse(
+                User.builder()
+                        .oAuth2Id(oAuth2Id)
+                        .nickname(nickname)
+                        .email(oAuth2Id)
+                        .role(Role.ROLE_USER)
+                        .provider(Provider.getEnumClass(provider))
+                        .build()
+        );
+        userService.register(user);
+
+
         return new PrincipalDetails(user, oAuth2User);
 
     }

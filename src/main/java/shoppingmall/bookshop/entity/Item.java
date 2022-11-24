@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import shoppingmall.bookshop.dto.ItemUpdateDto;
+import net.minidev.json.annotate.JsonIgnore;
+import shoppingmall.bookshop.dto.item.ItemUpdateDto;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,6 +20,7 @@ import java.util.Date;
 public class Item {
 
     @Id @GeneratedValue
+    @Column(name = "item_id")
     private Long id;
 
     private String title;
@@ -37,10 +38,15 @@ public class Item {
     @ManyToOne
     private User admin;
 
+    @OneToMany(mappedBy="item")
+    @JsonIgnore
+    private List<ItemCategory> itemCategories = new ArrayList<>();
+
     public void update(ItemUpdateDto itemUpdateDto) {
         this.title = itemUpdateDto.getTitle();
         this.author = itemUpdateDto.getAuthor();
         this.summery = itemUpdateDto.getSummery();
         this.price = itemUpdateDto.getPrice();
     }
+
 }

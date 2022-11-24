@@ -1,4 +1,4 @@
-package shoppingmall.bookshop.dto;
+package shoppingmall.bookshop.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

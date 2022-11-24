@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import shoppingmall.bookshop.authentication.JwtTokenProvider;
 import shoppingmall.bookshop.authentication.CustomAuthenticationFailureHandler;
 import shoppingmall.bookshop.authentication.CustomAuthenticationSuccessHandler;
-import shoppingmall.bookshop.dto.LoginRequestDto;
-import shoppingmall.bookshop.dto.UserRegisterDto;
+import shoppingmall.bookshop.authentication.socialLogin.SocialUserService;
+import shoppingmall.bookshop.dto.account.LoginRequestDto;
+import shoppingmall.bookshop.dto.account.UserRegisterDto;
 import shoppingmall.bookshop.entity.User;
 import shoppingmall.bookshop.service.UserService;
 
@@ -35,6 +36,7 @@ public class UserRestController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+    private final SocialUserService socialUserService;
 
     // 회원가입
     @RequestMapping (value = "/api/register", method = RequestMethod.POST)
@@ -73,9 +75,7 @@ public class UserRestController {
     }
 
     @RequestMapping(value = "/oauth2/authorization/kakao", method = RequestMethod.POST)
-    public void kakaoLogin() {
-
-    }
+    public void kakaoLogin() {}
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public String logout(HttpServletRequest request) {

@@ -1,7 +1,7 @@
 package shoppingmall.bookshop.authentication;
 public enum Role {
     ROLE_USER("ROLE_USER"),
-    ROLE_SUPER("ROLE_SUPER");
+    ROLE_ADMIN("ROLE_ADMIN");
 
     String role;
 

@@ -1,4 +1,4 @@
-package shoppingmall.bookshop.dto;
+package shoppingmall.bookshop.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,16 +17,13 @@ public class AdminRegisterDto {
 
     private String password;
 
-    private String secretCode;
-
-    private Role role;
 
     public User toEntity() {
         return User.builder()
                 .userId(userId)
                 .password(passwordEncoder.encode(password))
                 .nickname("운영자1")
-                .role(Role.ROLE_SUPER)
+                .role(Role.ROLE_ADMIN)
                 .build();
     }
 

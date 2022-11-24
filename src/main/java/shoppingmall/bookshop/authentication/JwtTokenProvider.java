@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Component
 @RequiredArgsConstructor
@@ -32,9 +34,17 @@ public class JwtTokenProvider {
 
     private String secretKey = "secretkeyyyy12345678901234567890";
 
-    public Jws<Claims> getClaimsFromJwt(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token);
+    public Claims getClaimsFromJwt(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody();
+        } catch(ExpiredJwtException e) {
+            return e.getClaims();
+        }
 
+    }
+
+    public Jws<Claims> getJwsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token);
     }
  /*
    - Jwts.parserBuilder()
@@ -54,6 +64,7 @@ public class JwtTokenProvider {
     public String createAccessToken(String userId) {
         log.info("access token을 생성합니다.");
         Claims claims = Jwts.claims().setSubject(userId); // 토큰의 이름 지정
+        System.out.println(claims.getSubject());
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)
@@ -77,27 +88,30 @@ public class JwtTokenProvider {
 
     // 인증 정보 반환
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = formUserDetailsService.loadUserByUsername(getClaimsFromJwt(token).getBody().getSubject());
+        UserDetails userDetails = formUserDetailsService.loadUserByUsername(getClaimsFromJwt(token).getSubject());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     // 만료되지 않은(유효한) 토큰인지 검증
     public boolean validateToken(String accessToken, HttpServletResponse response) {
-        Jws<Claims> claims = getClaimsFromJwt(accessToken);
+        Claims claims = getClaimsFromJwt(accessToken);
         log.info("access token이 만료되었는지 확인합니다.");
-        if (claims.getBody().getExpiration().after(new Date())) return true;
+        if (claims.getExpiration().after(new Date())) return true;
 
         log.info("access token이 만료된 경우 refresh token이 만료되었는지 확인합니다.");
-        User user = userService.findUserByUserId(claims.getBody().getSubject())
-                .orElseThrow(() -> {
-                    throw new NoSuchElementException("아이디와 일치하는 회원이 존재하지 않습니다.");
-                });
-        String refreshToken = user.getRefreshToken();
-        Jws<Claims> refreshTokenClaims = getClaimsFromJwt(refreshToken);
 
-        if(refreshTokenClaims.getBody().getExpiration().after(new Date())) {
+        Supplier<Optional<User>> supplier = () -> userService.findUserByEmail(claims.getSubject());
+        Optional<User> nullableUser = Optional.ofNullable(userService.findUserByEmail(claims.getSubject())).orElseGet(supplier);
+        User user = nullableUser.orElseThrow(
+                () -> {throw new NoSuchElementException("해당 회원이 존재하지 않습니다.");}
+        );
+
+        String refreshToken = user.getRefreshToken();
+        Claims refreshTokenClaims = getClaimsFromJwt(refreshToken);
+
+        if(refreshTokenClaims.getExpiration().after(new Date())) {
             log.info("refresh token이 유효한 경우 access token을 갱신합니다.");
-            response.setHeader(HttpHeaders.AUTHORIZATION, createAccessToken(claims.getBody().getSubject()));
+            response.setHeader(HttpHeaders.AUTHORIZATION, createAccessToken(claims.getSubject()));
             return true;
         } else {
             log.error("refresh token이 만료되었습니다.");

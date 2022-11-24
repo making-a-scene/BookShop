@@ -1,0 +1,40 @@
+{
+  "sampleUser" : [
+    {
+      "userId": "newid",
+      "password": "$2a$10$CtNwycQlIS3/UampMhvujOOn6s6l6NZpspsgvlu4WFf0Gy6bK5vYu",
+      "email": "4936joo@sookmyung.ac.kr",
+      "nickname": "testNickname",
+      "role": "ROLE_USER",
+      "provider": null,
+      "refreshToken": null
+    },
+    {
+      "userId": "newid2",
+      "password": "$2a$10$CtNwycQlIS3/1231e4234er",
+      "email": "123@sookmyung.ac.kr",
+      "nickname": "fsdfa",
+      "role": "ROLE_USER",
+      "provider": null,
+      "refreshToken": null
+    },
+    {
+      "userId": "newid3",
+      "password": "$sfasu4WFf0Gy6bK5vYu",
+      "email": "zxvczx@sookmyung.ac.kr",
+      "nickname": "asdfaf",
+      "role": "ROLE_USER",
+      "provider": null,
+      "refreshToken": null
+    },
+    {
+      "userId": "admin",
+      "password": "admin123",
+      "email": "asfdf@kr.kr",
+      "nickname": "운영자1",
+      "role": "ROLE_ADMIN",
+      "provider": null,
+      "refreshToken": null
+    }
+  ]
+}

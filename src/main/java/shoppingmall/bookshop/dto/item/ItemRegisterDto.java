@@ -1,10 +1,13 @@
-package shoppingmall.bookshop.dto;
+package shoppingmall.bookshop.dto.item;
 
 import lombok.RequiredArgsConstructor;
+import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.entity.Item;
+import shoppingmall.bookshop.entity.ItemCategory;
 import shoppingmall.bookshop.entity.User;
 
 import java.util.Date;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ItemRegisterDto {
@@ -21,6 +24,8 @@ public class ItemRegisterDto {
 
     private final User admin;
 
+    private final List<ItemCategory> itemCategories;
+
     public Item toEntity() {
         return Item.builder()
                 .title(title)
@@ -30,6 +35,7 @@ public class ItemRegisterDto {
                 .publishedAt(publishedAt)
                 .price(price)
                 .admin(admin)
+                .itemCategories(itemCategories)
                 .build();
     }
 

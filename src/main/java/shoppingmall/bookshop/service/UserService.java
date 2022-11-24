@@ -9,6 +9,7 @@ import shoppingmall.bookshop.repository.UserRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,8 +30,9 @@ public class UserService {
         return userRepository.findByUserId(userId);
     }
 
-    public User findUserByoAuth2Id(String oAuth2Id) {
-        return userRepository.findByOAuth2Id(oAuth2Id);
+
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Transactional
@@ -41,14 +43,13 @@ public class UserService {
     @Transactional
     public void setRefreshToken(String userId, String token) {
 
-        findUserByUserId(userId).ifPresentOrElse(
-                (user) -> {
-                    user.setRefreshToken(token);
-                    register(user);},
-                () ->  {findUserByoAuth2Id(userId).setRefreshToken(token);
-                    register(findUserByoAuth2Id(userId));}
+        Supplier<Optional<User>> supplier = () -> findUserByUserId(userId);
+        Optional<User> nullableUser = Optional.ofNullable(findUserByUserId(userId)).orElseGet(supplier);
+        User user = nullableUser.orElseThrow(
+                () -> {throw new NoSuchElementException("해당 회원이 존재하지 않습니다.");}
         );
 
+        user.setRefreshToken(token);
     }
 
 }
