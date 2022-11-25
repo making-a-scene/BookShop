@@ -22,7 +22,7 @@ public class Category {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", orphanRemoval = true)
     @JsonIgnore
     private List<ItemCategory> itemCategories = new ArrayList<>();
 
@@ -34,7 +34,7 @@ public class Category {
 
     private boolean isParent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
     @ToString.Exclude
     @JsonIgnore
     private List<Category> childCategories = new ArrayList<>();
