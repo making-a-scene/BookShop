@@ -27,17 +27,30 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
 
-    // item의 카테고리 이동
+    private static Long setRelationship(Item item, List<ItemCategory> itemCategories) {
+        for (ItemCategory itemCategory : itemCategories) {
+            itemCategory.setItem(item);
+        }
+        return item.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Item> findAll() {
+        return itemRepository.findAll();
+    }
+
     @Transactional(readOnly = true)
     public Item findItemById(Long id) {
         return ItemServiceRequestValidator.validateExistOrNot(itemRepository.findById(id));
     }
 
+    // 책 제목으로 item 엔티티 검색
     @Transactional(readOnly = true)
     public Item findItemByTitle(String title) {
         return ItemServiceRequestValidator.validateExistOrNot(itemRepository.findItemByName(title));
     }
 
+    //  카테고리 내에 있는 모든 상품들 출력
     @Transactional(readOnly = true)
     public List<Item> findAllItemsFromCategory(Long categoryId) {
         Category category = validateExistOrNot(categoryService.findById(categoryId));
@@ -47,36 +60,39 @@ public class ItemService {
     }
     private List<ItemCategory> getAllItemCategories(Category category, List<ItemCategory> itemCategories) {
         if (validateParentOrNot(category)) {
-            List<List<ItemCategory>> allItems = category.getChildCategories().stream().map(Category::getItems).toList();
+            List<List<ItemCategory>> allItems = category.getChildCategories().stream().map(Category::getItemCategories).toList();
             for (List<ItemCategory> itemCategoryList : allItems) {
                 itemCategories.addAll(itemCategoryList);
             }
             return itemCategories;
         }
-        itemCategories.addAll(category.getItems());
+        itemCategories.addAll(category.getItemCategories());
         return itemCategories;
     }
 
-    @Transactional(readOnly = true)
-    public List<Item> findAll() {
-        return itemRepository.findAll();
-    }
-
-    public Long registerNewItem(ItemRegisterDto itemRegisterDto) throws InsufficientAuthenticationException {
+    // 새로운 상품 등록
+    public Long registerNewItem(ItemRegisterDto itemRegisterDto) {
         Item item = itemRepository.save(itemRegisterDto.toEntity());
-        return item.getId();
+        List<ItemCategory> itemCategories = itemRegisterDto.getItemCategories();
+
+        return setRelationship(item, itemCategories);
     }
 
+    // 상품 삭제
     public void deleteItem(User subject, Long itemId) throws InsufficientAuthenticationException {
         Item itemToBeDeleted = findItemById(itemId);
         validateAuthorization(itemToBeDeleted, subject);
         itemRepository.delete(itemToBeDeleted);
     }
 
+    // 상품 수정
     public Long updateItem(User subject, ItemUpdateDto itemUpdateDto) {
         Item updateItem = findItemById(itemUpdateDto.getId());
         validateAuthorization(updateItem, subject);
+
         updateItem.update(itemUpdateDto);
-        return updateItem.getId();
+
+        List<ItemCategory> itemCategories = itemUpdateDto.getItemCategories();
+        return setRelationship(updateItem, itemCategories);
     }
 }

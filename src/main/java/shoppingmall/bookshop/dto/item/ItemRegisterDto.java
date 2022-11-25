@@ -1,7 +1,7 @@
 package shoppingmall.bookshop.dto.item;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.entity.Item;
 import shoppingmall.bookshop.entity.ItemCategory;
 import shoppingmall.bookshop.entity.User;
@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Getter
 public class ItemRegisterDto {
 
     private final String title;

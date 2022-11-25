@@ -2,9 +2,9 @@ package shoppingmall.bookshop.dto.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import shoppingmall.bookshop.entity.Category;
-import shoppingmall.bookshop.entity.Item;
 import shoppingmall.bookshop.entity.ItemCategory;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -20,6 +20,6 @@ public class ItemUpdateDto {
 
     private int price;
 
-    private ItemCategory category;
+    private List<ItemCategory> itemCategories;
 
 }
