@@ -24,7 +24,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore
-    private List<ItemCategory> items = new ArrayList<>();
+    private List<ItemCategory> itemCategories = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
@@ -53,4 +53,5 @@ public class Category {
 
         parent.getChildCategories().add(this);
     }
+
 }

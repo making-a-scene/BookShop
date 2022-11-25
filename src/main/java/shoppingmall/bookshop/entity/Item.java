@@ -49,4 +49,10 @@ public class Item {
         this.price = itemUpdateDto.getPrice();
     }
 
+    public void setItemCategories(List<ItemCategory> itemCategories) {
+        if (!this.itemCategories.isEmpty()) {
+            this.itemCategories.clear();
+        }
+        this.itemCategories = itemCategories;
+    }
 }
