@@ -33,17 +33,6 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-//    public List<Category> findAllParents() {
-//        List<Category> all = findAll();
-//        List<Category> parents = new ArrayList<>();
-//        for (Category category : all) {
-//            if (category.isParent()) {
-//                parents.add(category);
-//            }
-//        }
-//        return parents;
-//    }
-
     public List<Category> findAllParents() {
         List<Category> all = findAll();
         return all.stream().filter(Category::isParent).collect(Collectors.toList());
@@ -55,6 +44,7 @@ public class CategoryService {
     }
 
     // 카테고리 등록(이미 존재하는 카테고리인지 확인) - 부모, 자식 카테고리 따로
+    // 부모 카테고리 등록
     @Transactional
     public Long registerParentCategory(RegisterParentCategoryDto parentCategoryDto) {
         Category newParentCategory = parentCategoryDto.toEntity();
@@ -62,12 +52,14 @@ public class CategoryService {
         validateDuplicatedOrNot(categoryRepository.findById(newParentCategory.getId()));
         return categoryRepository.save(newParentCategory).getId();
     }
+    // 자식 카테고리 등록
     @Transactional
     public Long registerChildCategory(RegisterChildCategoryDto childCategoryDto) {
         Category newChildCategory = childCategoryDto.toEntity();
 
         validateDuplicatedOrNot(categoryRepository.findById(newChildCategory.getId()));
         validateExistOrNot(findById(newChildCategory.getParent().getId()));
+        newChildCategory.setCategoryRelationship(childCategoryDto.getParent());
 
         return categoryRepository.save(newChildCategory).getId();
     }
@@ -88,9 +80,20 @@ public class CategoryService {
     // 카테고리 이름 수정
     @Transactional
     public Long updateCategoryName(CategoryNameUpdateDto nameUpdateDto) {
-
         Category category = validateExistOrNot(findById(nameUpdateDto.getId()));
         category.updateCategoryName(nameUpdateDto.getCategoryName());
+
+        return setRelationship(category);
+    }
+    private static Long setRelationship(Category category) {
+        if (validateParentOrNot(category)) {
+            List<Category> childCategories = category.getChildCategories();
+            for (Category child : childCategories) {
+                child.setCategoryRelationship(category);
+            }
+        } else {
+            category.setCategoryRelationship(category.getParent());
+        }
         return category.getId();
     }
 
@@ -105,7 +108,7 @@ public class CategoryService {
         if(validateParentOrNot(parent)) {
             throw new IllegalStateException("하위 카테고리의 경우 상위 카테고리로 등록할 수 없습니다.");
         }
-
+        child.setCategoryRelationship(parent);
     }
 
 
