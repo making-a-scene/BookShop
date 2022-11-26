@@ -25,8 +25,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Optional<Category> findById(Long id) {
-        return categoryRepository.findById(id);
+    public Category findById(Long id) {
+        return validateExistOrNot(categoryRepository.findById(id));
     }
 
     public List<Category> findAll() {
@@ -41,6 +41,14 @@ public class CategoryService {
     public List<Category> findAllChildByParent(Long parentId) {
         Category parent = validateExistOrNot(categoryRepository.findById(parentId));
         return parent.getChildCategories();
+    }
+
+    public Category findParentByChild(Long childId) {
+        Category child = validateExistOrNot(categoryRepository.findById(childId));
+        if (validateParentOrNot(child)) {
+            throw new IllegalStateException("자식 카테고리가 아닙니다.");
+        }
+        return child.getParent();
     }
 
     // 카테고리 등록(이미 존재하는 카테고리인지 확인) - 부모, 자식 카테고리 따로
@@ -58,7 +66,7 @@ public class CategoryService {
         Category newChildCategory = childCategoryDto.toEntity();
 
         validateDuplicatedOrNot(categoryRepository.findById(newChildCategory.getId()));
-        validateExistOrNot(findById(newChildCategory.getParent().getId()));
+        findById(newChildCategory.getParent().getId());
         newChildCategory.setCategoryRelationship(childCategoryDto.getParent());
 
         return categoryRepository.save(newChildCategory).getId();
@@ -80,7 +88,7 @@ public class CategoryService {
     // 카테고리 이름 수정
     @Transactional
     public Long updateCategoryName(CategoryNameUpdateDto nameUpdateDto) {
-        Category category = validateExistOrNot(findById(nameUpdateDto.getId()));
+        Category category = findById(nameUpdateDto.getId());
         category.updateCategoryName(nameUpdateDto.getCategoryName());
 
         return setRelationship(category);

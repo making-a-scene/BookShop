@@ -12,7 +12,6 @@ import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.service.CategoryService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -32,6 +31,17 @@ public class CategoryController {
         return new ResponseEntity<>(allParents, httpHeaders, OK);
     }
 
+    // 특정 자식 카테고리의 부모 카테고리 조회
+    @RequestMapping(value = "/category/parent", method = GET)
+    public ResponseEntity<Category> getChildsParent(@RequestParam("id") Long childId) {
+        Category parent = categoryService.findById(childId);
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(parent, httpHeaders, OK);
+
+    }
+
     // 특정 부모 카테고리의 자식 카테고리 모두 조회
     @RequestMapping(value = "/category/all/child", method = GET)
     public ResponseEntity<List<Category>> getAllChildFromParent(@RequestParam Long parentId) {
@@ -46,9 +56,7 @@ public class CategoryController {
     @RequestMapping(value = "/admin/category/new/parent", method = POST)
     public ResponseEntity<Category> makeNewParent(@RequestBody RegisterParentCategoryDto registerParentDto) {
         Long categoryId = categoryService.registerParentCategory(registerParentDto);
-        Category category = categoryService.findById(categoryId).orElseThrow(
-                () -> {throw new NoSuchElementException("카테고리가 정상적으로 저장되지 않았습니다. 다시 시도해주세요.");}
-        );
+        Category category = categoryService.findById(categoryId);
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -59,9 +67,7 @@ public class CategoryController {
     @RequestMapping(value = "/admin/category/new/child", method = POST)
     public ResponseEntity<Category> makeNewChild(@RequestBody RegisterChildCategoryDto registerChildDto) {
         Long categoryId = categoryService.registerChildCategory(registerChildDto);
-        Category category = categoryService.findById(categoryId).orElseThrow(
-                () -> {throw new NoSuchElementException("카테고리가 정상적으로 저장되지 않았습니다. 다시 시도해주세요.");}
-        );
+        Category category = categoryService.findById(categoryId);
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -79,13 +85,10 @@ public class CategoryController {
     @RequestMapping(value = "/admin/category/update/name", method = POST)
     public ResponseEntity<Category> changeCategoryName(@RequestBody CategoryNameUpdateDto nameUpdateDto) {
         Long id = categoryService.updateCategoryName(nameUpdateDto);
-        Category changedCategory = categoryService.findById(id).orElseThrow(
-                () -> {throw new NoSuchElementException("카테고리가 정상적으로 저장되지 않았습니다. 다시 시도해주세요.");}
-        );
+        Category changedCategory = categoryService.findById(id);
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(changedCategory, httpHeaders, OK);
-
     }
 }

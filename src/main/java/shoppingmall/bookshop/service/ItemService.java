@@ -10,8 +10,8 @@ import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.entity.Item;
 import shoppingmall.bookshop.entity.ItemCategory;
 import shoppingmall.bookshop.entity.User;
+import shoppingmall.bookshop.repository.ItemCategoryQueryRepository;
 import shoppingmall.bookshop.repository.ItemRepository;
-import shoppingmall.bookshop.validation.ItemServiceRequestValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,7 @@ import static shoppingmall.bookshop.validation.ItemServiceRequestValidator.*;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final ItemCategoryQueryRepository itemCategoryRepository;
     private final CategoryService categoryService;
 
     private static Long setRelationship(Item item, List<ItemCategory> itemCategories) {
@@ -41,33 +42,19 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public Item findItemById(Long id) {
-        return ItemServiceRequestValidator.validateExistOrNot(itemRepository.findById(id));
+        return validateExistOrNot(itemRepository.findById(id));
     }
 
     // 책 제목으로 item 엔티티 검색
     @Transactional(readOnly = true)
     public Item findItemByTitle(String title) {
-        return ItemServiceRequestValidator.validateExistOrNot(itemRepository.findItemByName(title));
+        return validateExistOrNot(itemRepository.findItemByName(title));
     }
 
     //  카테고리 내에 있는 모든 상품들 출력
     @Transactional(readOnly = true)
     public List<Item> findAllItemsFromCategory(Long categoryId) {
-        Category category = validateExistOrNot(categoryService.findById(categoryId));
-        List<ItemCategory> foundItemCategories = new ArrayList<>();
-        List<ItemCategory> allItemCategories = getAllItemCategories(category, foundItemCategories);
-        return new ArrayList<>(allItemCategories.stream().map(ItemCategory::getItem).toList());
-    }
-    private List<ItemCategory> getAllItemCategories(Category category, List<ItemCategory> itemCategories) {
-        if (validateParentOrNot(category)) {
-            List<List<ItemCategory>> allItems = category.getChildCategories().stream().map(Category::getItemCategories).toList();
-            for (List<ItemCategory> itemCategoryList : allItems) {
-                itemCategories.addAll(itemCategoryList);
-            }
-            return itemCategories;
-        }
-        itemCategories.addAll(category.getItemCategories());
-        return itemCategories;
+        return itemCategoryRepository.findAllItemsByCategory(categoryService.findById(categoryId));
     }
 
     // 새로운 상품 등록
