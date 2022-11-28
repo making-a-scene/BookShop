@@ -1,7 +1,6 @@
 package shoppingmall.bookshop.dto.account;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import shoppingmall.bookshop.authentication.Role;
@@ -11,7 +10,6 @@ import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
-@Builder
 @Slf4j
 public class UserRegisterDto {
 

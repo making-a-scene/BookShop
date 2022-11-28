@@ -1,7 +1,7 @@
 package shoppingmall.bookshop.entity;
 
 import lombok.Getter;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 

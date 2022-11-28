@@ -1,7 +1,7 @@
 package shoppingmall.bookshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,18 +26,16 @@ public class Category {
     @JsonIgnore
     private List<ItemCategory> itemCategories = new ArrayList<>();
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parent_id")
+    @ManyToOne(fetch = EAGER)
     @ToString.Exclude
-    @JsonIgnore
     private Category parent;
 
-    private boolean isParent;
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
-    @ToString.Exclude
     @JsonIgnore
     private List<Category> childCategories = new ArrayList<>();
+
+    private boolean isParent;
 
     public void updateCategoryName(String name) {
         this.categoryName = name;
@@ -46,12 +44,13 @@ public class Category {
     // 연관 관계 편의 메서드
     public void setCategoryRelationship(Category parent) {
         // this : 자식 카테고리
-        if (this.parent != null) {
-            this.parent.getChildCategories().remove(this);
-        }
+        parent.getChildCategories().remove(this);
         this.parent = parent;
-
         parent.getChildCategories().add(this);
+    }
+
+    public boolean getWhetherParentOrNot() {
+        return isParent;
     }
 
 }

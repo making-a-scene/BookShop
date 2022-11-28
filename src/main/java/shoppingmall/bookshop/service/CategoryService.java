@@ -12,11 +12,9 @@ import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.repository.CategoryRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shoppingmall.bookshop.validation.CategoryServiceRequestValidator.*;
-import static shoppingmall.bookshop.validation.CategoryServiceRequestValidator.validateExistOrNot;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class CategoryService {
 
     public List<Category> findAllParents() {
         List<Category> all = findAll();
-        return all.stream().filter(Category::isParent).collect(Collectors.toList());
+        return all.stream().filter(Category::getWhetherParentOrNot).collect(Collectors.toList());
     }
 
     public List<Category> findAllChildByParent(Long parentId) {
@@ -56,8 +54,6 @@ public class CategoryService {
     @Transactional
     public Long registerParentCategory(RegisterParentCategoryDto parentCategoryDto) {
         Category newParentCategory = parentCategoryDto.toEntity();
-
-        validateDuplicatedOrNot(categoryRepository.findById(newParentCategory.getId()));
         return categoryRepository.save(newParentCategory).getId();
     }
     // 자식 카테고리 등록
@@ -65,8 +61,6 @@ public class CategoryService {
     public Long registerChildCategory(RegisterChildCategoryDto childCategoryDto) {
         Category newChildCategory = childCategoryDto.toEntity();
 
-        validateDuplicatedOrNot(categoryRepository.findById(newChildCategory.getId()));
-        findById(newChildCategory.getParent().getId());
         newChildCategory.setCategoryRelationship(childCategoryDto.getParent());
 
         return categoryRepository.save(newChildCategory).getId();

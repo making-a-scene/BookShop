@@ -1,6 +1,7 @@
 package shoppingmall.bookshop.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/oauth2/authorization/naver") || request.getServletPath().equals("/oauth2/authorization/kakao")) {
@@ -37,13 +37,13 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             String TOKEN_PREFIX = "Bearer ";
 
             log.info("요청 헤더에서 access token 정보를 받아 옵니다.");
-            String token = authorizationHeader.substring("Bearer ".length());
+            String token = authorizationHeader.substring(TOKEN_PREFIX.length());
 
             log.info("토큰의 유효성을 검증합니다.");
             if(jwtTokenProvider.validateToken(token, response)) {
                 log.info("토큰이 유효한 경우 Authentication을 SecurityContextHolder에 보관합니다.");
                 SecurityContextHolder.getContext().setAuthentication((jwtTokenProvider.getAuthentication(token)));
-                new ObjectMapper().writeValue(response.getOutputStream(), (jwtTokenProvider.getAuthentication(token)));
+                new ObjectMapper().registerModule(new JavaTimeModule()).writeValue(response.getOutputStream(), (jwtTokenProvider.getAuthentication(token)));
             } else {
                 log.error("인증 실패");
 

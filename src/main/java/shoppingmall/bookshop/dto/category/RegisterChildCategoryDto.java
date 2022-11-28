@@ -1,21 +1,23 @@
 package shoppingmall.bookshop.dto.category;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import shoppingmall.bookshop.entity.Category;
 
+import java.util.ArrayList;
+
 @Getter
-@Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegisterChildCategoryDto {
-    private final String categoryName;
-    private final Category parent;
+    private String categoryName;
+    private Category parent;
 
     public Category toEntity() {
         return Category.builder()
                 .categoryName(categoryName)
+                .itemCategories(new ArrayList<>())
                 .parent(parent)
+                .isParent(false)
                 .build();
     }
 

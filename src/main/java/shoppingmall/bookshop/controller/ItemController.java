@@ -35,13 +35,13 @@ public class ItemController {
     // 상품 삭제
     @RequestMapping(value = "/admin/item/delete", method = DELETE)
     public void deleteItem(@RequestParam("id") Long itemId, @AuthenticationPrincipal PrincipalDetails principal) {
-        itemService.deleteItem(principal.getUser(), itemId);
+        itemService.deleteItem(itemId);
     }
 
     // 상품 정보 수정
     @RequestMapping(value = "/admin/item/update", method = POST)
-    public Long updateItemInfo(@RequestBody ItemUpdateDto itemUpdateDto, @AuthenticationPrincipal PrincipalDetails principal) {
-        return itemService.updateItem(principal.getUser(), itemUpdateDto);
+    public Long updateItemInfo(@RequestBody ItemUpdateDto itemUpdateDto) {
+        return itemService.updateItem(itemUpdateDto);
     }
 
     // 등록되어 있는 전체 상품 엔티티 get

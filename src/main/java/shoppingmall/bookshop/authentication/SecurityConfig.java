@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -50,11 +49,6 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web -> web.ignoring().antMatchers("/user/**", "/admin/**"));
-    }
-
     // HttpSecurity : http 요청이 발생했을 때 적용할 보안 설정
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,11 +56,9 @@ public class SecurityConfig {
         http.csrf().disable();
         http.httpBasic().disable();
         http.authorizeRequests()
+                .antMatchers("/").permitAll()
                 .antMatchers("/user/**").hasRole("USER")
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-                .and()
-                .requestMatchers()
-                .antMatchers("/user/")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .and()
         .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

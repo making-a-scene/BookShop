@@ -22,7 +22,7 @@ public class CategoryServiceRequestValidator {
     }
 
     public static boolean validateParentOrNot(Category category) {
-        return category.isParent();
+        return category.getWhetherParentOrNot();
     }
 
     public static void validateEmptyParentOrNot(Category parent) {

@@ -29,7 +29,7 @@
     },
     {
       "userId": "admin",
-      "password": "admin123",
+      "password": "$2a$10$f3po6/W7o380xzqqm2Zd0uXfUR30p5Q0U.YauEWcic2zSs8FfNHvi",
       "email": "asfdf@kr.kr",
       "nickname": "운영자1",
       "role": "ROLE_ADMIN",

@@ -1,22 +1,17 @@
 package shoppingmall.bookshop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingmall.bookshop.dto.item.ItemRegisterDto;
 import shoppingmall.bookshop.dto.item.ItemUpdateDto;
-import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.entity.Item;
 import shoppingmall.bookshop.entity.ItemCategory;
-import shoppingmall.bookshop.entity.User;
 import shoppingmall.bookshop.repository.ItemCategoryQueryRepository;
 import shoppingmall.bookshop.repository.ItemRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static shoppingmall.bookshop.validation.CategoryServiceRequestValidator.*;
 import static shoppingmall.bookshop.validation.ItemServiceRequestValidator.*;
 
 @Transactional
@@ -66,20 +61,15 @@ public class ItemService {
     }
 
     // 상품 삭제
-    public void deleteItem(User subject, Long itemId) throws InsufficientAuthenticationException {
+    public void deleteItem(Long itemId) {
         Item itemToBeDeleted = findItemById(itemId);
-        validateAuthorization(itemToBeDeleted, subject);
         itemRepository.delete(itemToBeDeleted);
     }
 
     // 상품 수정
-    public Long updateItem(User subject, ItemUpdateDto itemUpdateDto) {
-        Item updateItem = findItemById(itemUpdateDto.getId());
-        validateAuthorization(updateItem, subject);
-
-        updateItem.update(itemUpdateDto);
-
+    public Long updateItem(ItemUpdateDto itemUpdateDto) {
+        findItemById(itemUpdateDto.getId()).update(itemUpdateDto);
         List<ItemCategory> itemCategories = itemUpdateDto.getItemCategories();
-        return setRelationship(updateItem, itemCategories);
+        return setRelationship(findItemById(itemUpdateDto.getId()), itemCategories);
     }
 }

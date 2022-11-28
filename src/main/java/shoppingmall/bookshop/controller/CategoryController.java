@@ -1,6 +1,7 @@
 package shoppingmall.bookshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -38,6 +40,7 @@ public class CategoryController {
 
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        log.info("부모 카테고리 조회 결과를 반환합니다.");
         return new ResponseEntity<>(parent, httpHeaders, OK);
 
     }
@@ -76,7 +79,7 @@ public class CategoryController {
 
     // 카테고리 삭제
     @RequestMapping(value = "/admin/category/remove", method = DELETE)
-    public String deleteCategory(@RequestParam Long categoryId) {
+    public String deleteCategory(@RequestParam(name = "id") Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return "삭제 완료";
     }

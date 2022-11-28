@@ -17,7 +17,7 @@ public class AdminController {
     private final UserService userService;
 
     @RequestMapping(value = "/v1/auth/join", method = RequestMethod.POST)
-    public ResponseEntity<User> adminJoin(AdminRegisterDto adminRegisterDto) throws IllegalAccessException {
+    public ResponseEntity<User> adminJoin(AdminRegisterDto adminRegisterDto) {
 
         User admin = adminRegisterDto.toEntity();
         userService.register(admin);
