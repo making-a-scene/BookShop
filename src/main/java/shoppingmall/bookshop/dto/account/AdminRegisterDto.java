@@ -2,8 +2,7 @@ package shoppingmall.bookshop.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.entity.User;
 
@@ -11,7 +10,7 @@ import shoppingmall.bookshop.entity.User;
 @AllArgsConstructor
 public class AdminRegisterDto {
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private String userId;
 
@@ -21,7 +20,8 @@ public class AdminRegisterDto {
     public User toEntity() {
         return User.builder()
                 .userId(userId)
-                .password(passwordEncoder.encode(password))
+//                .password(passwordEncoder.encode(password))
+                .password(password)
                 .nickname("운영자1")
                 .role(Role.ROLE_ADMIN)
                 .build();

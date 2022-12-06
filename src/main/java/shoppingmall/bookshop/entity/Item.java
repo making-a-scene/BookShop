@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import shoppingmall.bookshop.dto.item.ItemUpdateDto;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +17,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SequenceGenerator(name = "seq_item", allocationSize = 1)
 public class Item {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(generator = "seq_item")
     @Column(name = "item_id")
     private Long id;
 

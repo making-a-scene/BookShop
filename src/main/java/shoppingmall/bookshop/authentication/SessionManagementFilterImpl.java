@@ -1,5 +1,6 @@
 package shoppingmall.bookshop.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,34 +8,44 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.session.SessionManagementFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class SessionManagementFilterImpl extends SessionManagementFilter {
 
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
-    private final SessionAuthenticationStretegy sessionAuthenticationStretegy;
 
-    public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (!securityContextRepository.containsContext(request)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null) {
-
-
-            }
-        }
-
+    public SessionManagementFilterImpl(SecurityContextRepository securityContextRepository) {
+        super(securityContextRepository);
     }
 
-    private void executeSessionAuthenticaionStretegy() {
-        try {
-            this.sessionAuthenticaionStretegy().
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+
+        if (httpServletRequest.getServletPath().equals("/api/login")) {
+            log.info("로그인 전이므로 SessionManagementFilterImpl을 거치지 않습니다.");
+            chain.doFilter(httpServletRequest, httpServletResponse);
+            return;
         }
+
+        log.info("SecurityContext에 해당 유저의 인증 정보가 존재하는지 확인합니다.");
+        if (securityContextRepository.containsContext(httpServletRequest)) {
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            log.info("유저의 정보가 존재한다면 이 세션을 저장합니다.");
+            saveSession(securityContext, httpServletRequest, httpServletResponse);
+        }
+        chain.doFilter(httpServletRequest, httpServletResponse);
     }
 
+    private void saveSession(SecurityContext securityContext, HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication != null) {
+            securityContextRepository.saveContext(securityContext, request, response);
+        }
+    }
 }

@@ -2,7 +2,7 @@
   "sampleUser" : [
     {
       "userId": "newid",
-      "password": "$2a$10$CtNwycQlIS3/UampMhvujOOn6s6l6NZpspsgvlu4WFf0Gy6bK5vYu",
+      "password": "newpw1",
       "email": "4936joo@sookmyung.ac.kr",
       "nickname": "testNickname",
       "role": "ROLE_USER",
@@ -11,7 +11,7 @@
     },
     {
       "userId": "newid2",
-      "password": "$2a$10$CtNwycQlIS3/1231e4234er",
+      "password": "newpw2",
       "email": "123@sookmyung.ac.kr",
       "nickname": "fsdfa",
       "role": "ROLE_USER",
@@ -20,7 +20,7 @@
     },
     {
       "userId": "newid3",
-      "password": "$sfasu4WFf0Gy6bK5vYu",
+      "password": "newpw3",
       "email": "zxvczx@sookmyung.ac.kr",
       "nickname": "asdfaf",
       "role": "ROLE_USER",
@@ -29,7 +29,7 @@
     },
     {
       "userId": "admin",
-      "password": "$2a$10$f3po6/W7o380xzqqm2Zd0uXfUR30p5Q0U.YauEWcic2zSs8FfNHvi",
+      "password": "admin123",
       "email": "asfdf@kr.kr",
       "nickname": "운영자1",
       "role": "ROLE_ADMIN",

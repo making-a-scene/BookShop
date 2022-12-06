@@ -6,7 +6,7 @@ import shoppingmall.bookshop.entity.Category;
 import shoppingmall.bookshop.entity.Item;
 import shoppingmall.bookshop.entity.ItemCategory;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 

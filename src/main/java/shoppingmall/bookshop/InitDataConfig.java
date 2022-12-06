@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import shoppingmall.bookshop.entity.User;
@@ -16,21 +14,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class InitDataConfig implements CommandLineRunner {
 
-    private Logger log = LoggerFactory.getLogger(InitDataConfig.class);
-
-    private final String FILE_INIT_SAMPLE = "SampleData.json";
-
     private final UserRepository userRepository;
+
     @Override
     public void run(String... args) throws Exception {
-        List<User> sampleUsers = new ArrayList<>();
-        sampleUsers = getInitSamplesFromFile();
+        List<User> sampleUsers = getInitSamplesFromFile();
         if (sampleUsers == null || sampleUsers.size() == 0) {
             throw new IllegalArgumentException("no data in init data file.");
         }
@@ -39,8 +32,9 @@ public class InitDataConfig implements CommandLineRunner {
     }
 
     private List<User> getInitSamplesFromFile() throws IOException {
-        List<User> usersList = new ArrayList<>();
-        try (InputStream inputStream = getStreamFromResource(FILE_INIT_SAMPLE) ) {
+        List<User> usersList;
+        String FILE_INIT_SAMPLE = "SampleData.json";
+        try (InputStream inputStream = getStreamFromResource(FILE_INIT_SAMPLE)) {
             JsonNode sampleNode = getSampleNode(inputStream);
             usersList = getSampleListFromNode(sampleNode);
         }

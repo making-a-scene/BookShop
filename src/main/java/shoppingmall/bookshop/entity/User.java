@@ -7,7 +7,7 @@ import shoppingmall.bookshop.BaseEntity;
 import shoppingmall.bookshop.authentication.Role;
 import shoppingmall.bookshop.authentication.socialLogin.Provider;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.PROTECTED;

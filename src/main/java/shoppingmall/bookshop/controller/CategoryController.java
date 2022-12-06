@@ -55,7 +55,7 @@ public class CategoryController {
         return new ResponseEntity<>(allChildByParent, httpHeaders, OK);
     }
 
-    // 부모 카테고리 생성
+    // 부모 카테고리 생성8
     @RequestMapping(value = "/admin/category/new/parent", method = POST)
     public ResponseEntity<Category> makeNewParent(@RequestBody RegisterParentCategoryDto registerParentDto) {
         Long categoryId = categoryService.registerParentCategory(registerParentDto);

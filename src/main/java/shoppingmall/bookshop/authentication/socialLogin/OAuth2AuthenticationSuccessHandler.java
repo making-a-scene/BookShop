@@ -7,7 +7,7 @@
 //import shoppingmall.bookshop.authentication.PrincipalDetails;
 //import shoppingmall.bookshop.authentication.TokenDto;
 //
-//import javax.servlet.http.HttpServletResponse;
+//import jakarta.servlet.http.HttpServletResponse;
 //
 //@RequiredArgsConstructor
 //@Slf4j

@@ -3,7 +3,7 @@ package shoppingmall.bookshop.entity;
 import lombok.Getter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @IdClass(ItemCategoryId.class)
